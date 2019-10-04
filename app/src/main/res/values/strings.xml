@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">SOLID</string>
+    <integer name="splash_time">3000</integer>
+    <string-array name="jenis">
+        <item>Sedan</item>
+        <item>Jeep</item>
+        <item>Minibus</item>
+        <item>Truck</item>
+        <item>Pick Up</item>
+    </string-array>
+    <string-array name="syarat_umum">
+        <item>FC KTP Pemohon</item>
+        <item>FC KTP Suami / Istri</item>
+        <item>FC Kartu Keluarga / Surat Nikah</item>
+        <item>FC Rekening Tabungan / Rek. Koran 3 Bulan Terakhir / Laporan Keuangan</item>
+        <item>FC KTP Penjamin / Nama di STNK</item>
+        <item>Surat Ket. Gaji / Surat Ket. Usaha / Surat Izin Praktek</item>
+        <item>Nomor Pokok Wajib Pajak (NPWP)</item>
+        <item>FC PBB / Rek. Listrik / Air / Telp</item>
+    </string-array>
+    <string-array name="syarat_kendaraan">
+        <item>FC STNK</item>
+        <item>Asli BPKB</item>
+        <item>Asli Faktur / Faktur Legalisir</item>
+        <item>FC Bukti Pembayaran Pajak Kendaraan</item>
+    </string-array>
+</resources>
