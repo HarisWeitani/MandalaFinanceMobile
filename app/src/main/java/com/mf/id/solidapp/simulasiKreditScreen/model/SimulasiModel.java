@@ -1,4 +1,4 @@
-package com.solid.aplikasisolid.simulasiKreditScreen.model;
+package com.mf.aplikasisolid.simulasiKreditScreen.model;
 
 public class SimulasiModel {
     String tenor;

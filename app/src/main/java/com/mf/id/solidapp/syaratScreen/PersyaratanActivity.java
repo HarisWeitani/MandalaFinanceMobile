@@ -1,4 +1,4 @@
-package com.solid.aplikasisolid.syaratScreen;
+package com.mf.id.solidapp.syaratScreen;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,11 +8,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 
-import com.solid.aplikasisolid.R;
-import com.solid.aplikasisolid.syaratScreen.adapter.PersyaratanAdapter;
+import com.mf.aplikasisolid.syaratScreen.adapter.PersyaratanAdapter;
+import com.mf.id.solidapp.R;
 
 import java.util.Arrays;
 import java.util.List;

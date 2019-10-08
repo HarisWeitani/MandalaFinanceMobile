@@ -1,4 +1,4 @@
-package com.solid.aplikasisolid;
+package com.mf.aplikasisolid;
 
 import org.junit.Test;
 

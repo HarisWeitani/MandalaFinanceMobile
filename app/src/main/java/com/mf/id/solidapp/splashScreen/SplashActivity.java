@@ -1,4 +1,4 @@
-package com.solid.aplikasisolid.splashScreen;
+package com.mf.id.solidapp.splashScreen;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,8 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.solid.aplikasisolid.homeScreen.HomeActivity;
-import com.solid.aplikasisolid.R;
+import com.mf.aplikasisolid.homeScreen.HomeActivity;
+import com.mf.id.solidapp.R;
 
 public class SplashActivity extends AppCompatActivity {
 

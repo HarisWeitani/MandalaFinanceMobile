@@ -1,4 +1,4 @@
-package com.solid.aplikasisolid;
+package com.mf.aplikasisolid;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

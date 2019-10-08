@@ -24,4 +24,6 @@
         <item>Asli Faktur / Faktur Legalisir</item>
         <item>FC Bukti Pembayaran Pajak Kendaraan</item>
     </string-array>
+    <string name="catatan">Catatan: \nPerhitungan simulasi kredit per Minggu.</string>
+    <string name="rincian">*Rincian Simulasi diatas bersifat estimasi dan tidak mengikat dan dapat berubah sewaktu - waktu mengikuti kebijakan yang berlaku.  Data diatas belum termasuk biaya lain - lain. Untuk perhitungan detail, hubungi Solid atau cabang terdekat.</string>
 </resources>
