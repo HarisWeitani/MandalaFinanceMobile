@@ -1,4 +1,4 @@
-package com.mf.aplikasisolid.simulasiKreditScreen.adapter;
+package com.mf.id.solidapp.simulasiKreditScreen.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,20 +10,26 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.mf.aplikasisolid.R;
-import com.mf.aplikasisolid.rangkumanPerhitunganScreen.RangkumanActivity;
-import com.mf.aplikasisolid.simulasiKreditScreen.model.SimulasiModel;
+import com.mf.id.solidapp.R;
+import com.mf.id.solidapp.rangkumanPerhitunganScreen.RangkumanActivity;
+import com.mf.id.solidapp.simulasiKreditScreen.model.SimulasiModel;
 
+import org.apache.poi.ss.formula.functions.FinanceLib;
+
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class SimulasiAdapter extends RecyclerView.Adapter<SimulasiAdapter.ViewHolder> {
 
     List<SimulasiModel> list;
+    Long pokok;
     Context context;
 
-    public SimulasiAdapter(Context context,List<SimulasiModel> list) {
+    public SimulasiAdapter(Context context,List<SimulasiModel> list,long pokok) {
         this.list = list;
         this.context = context;
+        this.pokok = pokok;
     }
 
     @NonNull
@@ -35,15 +41,22 @@ public class SimulasiAdapter extends RecyclerView.Adapter<SimulasiAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, final int i) {
-        viewHolder.angsuran.setText(list.get(i).getAngsuran());
-        viewHolder.tenor.setText(list.get(i).getTenor());
-        viewHolder.detail.setImageResource(R.drawable.ic_search_black_24dp);
+
+        final Long angsuranV = Math.round(FinanceLib.pmt((list.get(i).getBunga()/100)/12,list.get(i).getDurasi(),0-pokok,0,false)/100)*100;
+
+        viewHolder.angsuran.setText("Rp. " + NumberFormat.getNumberInstance(new Locale("in","ID")).format(angsuranV));
+        viewHolder.tenor.setText(list.get(i).getDurasi()+ " Bulan");
+        viewHolder.detail.setImageResource(R.drawable.ic_search);
         viewHolder.detail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(context, RangkumanActivity.class);
-                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(i);
+                Intent x = new Intent(context, RangkumanActivity.class);
+                x.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                x.putExtra("pokok", pokok);
+                x.putExtra("angsuran", angsuranV);
+                x.putExtra("bunga", list.get(i).getBunga());
+                x.putExtra("durasi", list.get(i).getDurasi());
+                context.startActivity(x);
             }
         });
     }

@@ -1,27 +1,27 @@
-package com.mf.aplikasisolid.simulasiKreditScreen.model;
+package com.mf.id.solidapp.simulasiKreditScreen.model;
 
 public class SimulasiModel {
-    String tenor;
-    String angsuran;
+    int durasi;
+    double bunga;
 
-    public SimulasiModel(String tenor, String angsuran) {
-        this.tenor = tenor;
-        this.angsuran = angsuran;
+    public SimulasiModel(int durasi, double bunga) {
+        this.durasi = durasi;
+        this.bunga = bunga;
     }
 
-    public String getTenor() {
-        return tenor;
+    public int getDurasi() {
+        return durasi;
     }
 
-    public void setTenor(String tenor) {
-        this.tenor = tenor;
+    public void setDurasi(int durasi) {
+        this.durasi = durasi;
     }
 
-    public String getAngsuran() {
-        return angsuran;
+    public double getBunga() {
+        return bunga;
     }
 
-    public void setAngsuran(String angsuran) {
-        this.angsuran = angsuran;
+    public void setBunga(double bunga) {
+        this.bunga = bunga;
     }
 }

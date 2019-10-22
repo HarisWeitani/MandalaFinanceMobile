@@ -10,8 +10,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.mf.aplikasisolid.syaratScreen.PersyaratanActivity;
 import com.mf.id.solidapp.R;
+import com.mf.id.solidapp.syaratScreen.PersyaratanActivity;
 
 import org.apache.poi.ss.formula.functions.FinanceLib;
 
@@ -25,6 +25,9 @@ public class RangkumanActivity extends AppCompatActivity {
     Toolbar tb;
     Button syarat;
     TextView pokokHutang, sukuBunga, tenor, angsuran , catatan, rincian;
+    Long pokok, angsuranV;
+    int durasi;
+    double bunga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +51,20 @@ public class RangkumanActivity extends AppCompatActivity {
         catatan = findViewById(R.id.detailCatatanTV);
         rincian = findViewById(R.id.detailRincianTV);
 
-        pokokHutang.setText("Rp. 400.000.000");
-        sukuBunga.setText("0.95%");
-        tenor.setText("1 tahun");
+        Intent x = getIntent();
+        pokok = x.getLongExtra("pokok",0);
+        angsuranV = x.getLongExtra("angsuran",0);
+        durasi = x.getIntExtra("durasi",0);
+        bunga = x.getDoubleExtra("bunga",0);
 
-        Long angsuranV = Math.round(FinanceLib.pmt(0.2050/12,12,-400000000,0,false)/100)*100;
 
+        long ar = angsuranV*durasi;
+        long totalBunga = ar-pokok;
+        float bungaFlat = Math.round(totalBunga*10000/pokok/(durasi/12));
+        float sukuBungaV = Math.round(bungaFlat/12);
+        pokokHutang.setText("Rp. " + NumberFormat.getNumberInstance(new Locale("in","ID")).format(pokok));
+        sukuBunga.setText(Float.valueOf(sukuBungaV/100) + " %" );
+        tenor.setText(durasi + " Bulan");
         angsuran.setText("Rp. " + NumberFormat.getNumberInstance(new Locale("in","ID")).format(angsuranV));
 
         catatan.setText(getString(R.string.catatan) + "\n" + new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date()) );

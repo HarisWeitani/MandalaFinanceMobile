@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -17,6 +18,7 @@ import android.widget.Spinner;
 
 import com.mf.id.solidapp.R;
 import com.mf.id.solidapp.simulasiKreditScreen.SimulasiKreditActivity;
+import com.mf.id.solidapp.splashScreen.SplashActivity;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public class HomeActivity extends AppCompatActivity {
     Spinner jenis,tahun;
     Button hitung;
     String prefix;
+    double pokokV ;
 
     List<String> listJenis = new ArrayList<>();
     List<Integer> listTahun = new ArrayList<>();
@@ -47,6 +50,10 @@ public class HomeActivity extends AppCompatActivity {
         tahun = findViewById(R.id.tahunSpinner);
         hitung = findViewById(R.id.hitungB);
         setSupportActionBar(tb);
+
+        prefix = "Rp. ";
+
+        pokok.setText(prefix + 0);
     }
 
     @Override
@@ -56,12 +63,19 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.logo){
+            Intent i = new Intent(getBaseContext(), SplashActivity.class);
+            startActivity(i);
+            finish();
+        }
+        return true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
-        prefix = "Rp. ";
-
-        pokok.setText(prefix + 0);
         pokok.setSelection(pokok.getText().length());
         pokok.addTextChangedListener(new TextWatcher() {
             private String current = "";
@@ -97,14 +111,14 @@ public class HomeActivity extends AppCompatActivity {
                     String temp = s.toString();
                     //set non edited value
                     if(!temp.startsWith(prefix)){
-//                        temp = temp.replace(temp.substring(0,prefix.length()-1),prefix);
                         temp = current;
                     }
-                    String v_text = temp.replace(prefix,"").replaceAll("[,.]","");
+                    String v_text = temp.replace(prefix,"").replaceAll("[.]","");
                     double v_value = 0;
-                    if(v_text != null && v_text.length()>0)
+                    if(v_text != null && v_text.length()>0) {
                         v_value = Double.parseDouble(v_text);
-
+                        pokokV = v_value;
+                    }
                     //set edited value
                     String v_formated = prefix + NumberFormat.getNumberInstance(new Locale("in","ID")).format(v_value);
                     current = v_formated;
@@ -134,8 +148,21 @@ public class HomeActivity extends AppCompatActivity {
         hitung.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getBaseContext(), SimulasiKreditActivity.class);
-                startActivity(i);
+                if(pokokV<50000000){
+                    pokok.setError("Pokok pinjaman harus diatas 50 juta");
+                }else if(pokokV>200000000){
+                    pokok.setError("Pokok pinjaman harus dibawah 200 juta");
+                }else{
+                    String pokokPinjaman = pokok.getText().toString();
+                    String selectedJenis = jenis.getSelectedItem().toString();
+                    String selectedTahun = tahun.getSelectedItem().toString();
+
+                    Intent i = new Intent(getBaseContext(), SimulasiKreditActivity.class);
+                    i.putExtra("jenis",selectedJenis);
+                    i.putExtra("pokok",pokokPinjaman);
+                    i.putExtra("tahun",selectedTahun);
+                    startActivity(i);
+                }
             }
         });
     }

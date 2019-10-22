@@ -1,5 +1,6 @@
 package com.mf.id.solidapp.simulasiKreditScreen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,13 +10,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.mf.aplikasisolid.simulasiKreditScreen.adapter.SimulasiAdapter;
-import com.mf.aplikasisolid.simulasiKreditScreen.model.SimulasiModel;
 import com.mf.id.solidapp.R;
+import com.mf.id.solidapp.simulasiKreditScreen.adapter.SimulasiAdapter;
+import com.mf.id.solidapp.simulasiKreditScreen.model.SimulasiModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +30,8 @@ public class SimulasiKreditActivity extends AppCompatActivity {
     SimulasiAdapter adapter;
     List<SimulasiModel> modelList = new ArrayList<>();
     TextView catatan, rincian;
+    String pokok, jenis, tahun;
+    int usia;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +50,20 @@ public class SimulasiKreditActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        modelList.add(new SimulasiModel("1 tahun","Rp. 1.000.000"));
-        modelList.add(new SimulasiModel("2 tahun","Rp. 2.000.000"));
-        modelList.add(new SimulasiModel("3 tahun","Rp. 3.000.000"));
+
+        //need some validation for getting data
+
+        Intent i = getIntent();
+        pokok = i.getStringExtra("pokok");
+        jenis = i.getStringExtra("jenis");
+        tahun = i.getStringExtra("tahun");
+
+        usia = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(tahun);
+        Toast.makeText(getBaseContext(),String.valueOf(usia),Toast.LENGTH_LONG).show();
+
+        modelList.add(new SimulasiModel(12,20.5));
+        modelList.add(new SimulasiModel(24,21));
+        modelList.add(new SimulasiModel(36,21.5));
 
         catatan.setText(getString(R.string.catatan) + "\n" + new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date()) );
         rincian.setText(R.string.rincian);
@@ -56,7 +72,8 @@ public class SimulasiKreditActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        adapter = new SimulasiAdapter(getBaseContext(),modelList);
+        Long tempPokok = Long.parseLong(pokok.replace("Rp. ","").replaceAll("[.]",""));
+        adapter = new SimulasiAdapter(getBaseContext(),modelList,tempPokok);
         simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL,false));
         simulasiRV.setAdapter(adapter);
 

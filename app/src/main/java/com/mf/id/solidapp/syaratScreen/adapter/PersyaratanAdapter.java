@@ -1,4 +1,4 @@
-package com.mf.aplikasisolid.syaratScreen.adapter;
+package com.mf.id.solidapp.syaratScreen.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,7 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.mf.aplikasisolid.R;
+
+import com.mf.id.solidapp.R;
 
 import java.util.List;
 
