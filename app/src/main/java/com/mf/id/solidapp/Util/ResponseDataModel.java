@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 @Entity(tableName = "ResponseDatas")
-class ResponseDataModel {
+public class ResponseDataModel {
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "calculationId")

@@ -16,7 +16,7 @@ public class APIClient {
 
     private static ApiInterface client;
 
-    public ApiInterface getInstance(){
+    public static ApiInterface getInstance(){
         if(client==null)
             client = builder.build().create(ApiInterface.class);
         return client;

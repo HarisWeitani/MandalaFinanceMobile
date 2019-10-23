@@ -1,6 +1,7 @@
 package com.mf.id.solidapp.simulasiKreditScreen;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mf.id.solidapp.R;
+import com.mf.id.solidapp.Util.ResponseDataModel;
+import com.mf.id.solidapp.Util.database.AppDatabase;
 import com.mf.id.solidapp.simulasiKreditScreen.adapter.SimulasiAdapter;
 import com.mf.id.solidapp.simulasiKreditScreen.model.SimulasiModel;
 
@@ -33,6 +36,9 @@ public class SimulasiKreditActivity extends AppCompatActivity {
     String pokok, jenis, tahun;
     int usia;
 
+    AppDatabase db;
+    List<ResponseDataModel> listData = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,15 +57,15 @@ public class SimulasiKreditActivity extends AppCompatActivity {
             }
         });
 
-        //need some validation for getting data
+        db = AppDatabase.getInstance(getApplicationContext());
 
         Intent i = getIntent();
         pokok = i.getStringExtra("pokok");
         jenis = i.getStringExtra("jenis");
         tahun = i.getStringExtra("tahun");
 
-        usia = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(tahun);
-        Toast.makeText(getBaseContext(),String.valueOf(usia),Toast.LENGTH_LONG).show();
+//        usia = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(tahun);
+//        Toast.makeText(getBaseContext(),String.valueOf(usia),Toast.LENGTH_LONG).show();
 
         modelList.add(new SimulasiModel(12,20.5));
         modelList.add(new SimulasiModel(24,21));
@@ -72,7 +78,35 @@ public class SimulasiKreditActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Long tempPokok = Long.parseLong(pokok.replace("Rp. ","").replaceAll("[.]",""));
+        final Long tempPokok = Long.parseLong(pokok.replace("Rp. ","").replaceAll("[.]",""));
+
+//        AsyncTask.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                listData = db.userDao().getFilteredData(String.valueOf(usia),jenis);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        int tempDurasi;
+//                        double tempBunga;
+//                        for(ResponseDataModel model : listData){
+//                            tempDurasi = Integer.parseInt(model.getDtInterestName().replace(" Bulan",""));
+//                            tempBunga = Double.parseDouble(model.getDtInterestValue());
+//                            modelList.add(new SimulasiModel(tempDurasi,tempBunga));
+//                        }
+//                        runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                adapter = new SimulasiAdapter(getBaseContext(),modelList,tempPokok);
+//                                simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL,false));
+//                                simulasiRV.setAdapter(adapter);
+//                            }
+//                        });
+//                    }
+//                });
+//            }
+//        });
+
         adapter = new SimulasiAdapter(getBaseContext(),modelList,tempPokok);
         simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL,false));
         simulasiRV.setAdapter(adapter);

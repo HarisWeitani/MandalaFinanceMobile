@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">SOLID</string>
-    <integer name="splash_time">3000</integer>
+    <string name="databaseName">localDB</string>
+    <string name="SPname">MySharedPreferences</string>
     <string-array name="jenis">
+<!--        <item>Sedan , Minibus , Jeep</item>-->
         <item>Sedan</item>
         <item>Jeep</item>
         <item>Minibus</item>
         <item>Truck</item>
         <item>Pick Up</item>
+<!--        <item>Pick Up , Truck</item>-->
+
     </string-array>
     <string-array name="syarat_umum">
         <item>FC KTP Pemohon</item>

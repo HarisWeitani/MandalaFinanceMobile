@@ -1,6 +1,8 @@
 package com.mf.id.solidapp.homeScreen;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -17,12 +19,16 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.mf.id.solidapp.R;
+import com.mf.id.solidapp.Util.database.AppDatabase;
 import com.mf.id.solidapp.simulasiKreditScreen.SimulasiKreditActivity;
 import com.mf.id.solidapp.splashScreen.SplashActivity;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,10 +36,16 @@ public class HomeActivity extends AppCompatActivity {
 
     Toolbar tb;
     EditText pokok;
-    Spinner jenis,tahun;
+    Spinner jenis, tahun;
     Button hitung;
     String prefix;
-    double pokokV ;
+    double pokokV;
+    int maxUsia;
+
+    AppDatabase db;
+
+    SharedPreferences sp;
+    SharedPreferences.Editor edit;
 
     List<String> listJenis = new ArrayList<>();
     List<Integer> listTahun = new ArrayList<>();
@@ -51,20 +63,30 @@ public class HomeActivity extends AppCompatActivity {
         hitung = findViewById(R.id.hitungB);
         setSupportActionBar(tb);
 
+        sp = getSharedPreferences(getString(R.string.SPname),MODE_PRIVATE);
+        edit = sp.edit();
+
+        db = AppDatabase.getInstance(getApplicationContext());
+
         prefix = "Rp. ";
 
         pokok.setText(prefix + 0);
+
+        maxUsia = 0;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.home_menu,menu);
+        getMenuInflater().inflate(R.menu.home_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.logo){
+        if (item.getItemId() == R.id.logo) {
+//            edit.putBoolean("hasData",false);
+//            edit.apply();
+
             Intent i = new Intent(getBaseContext(), SplashActivity.class);
             startActivity(i);
             finish();
@@ -84,14 +106,14 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                if(after>0){
-                    index = s.length()-start;
-                }else{
-                    index = s.length()-start-1;
+                if (after > 0) {
+                    index = s.length() - start;
+                } else {
+                    index = s.length() - start - 1;
                 }
-                if(count > 0 && s.charAt(start) == '.'){
+                if (count > 0 && s.charAt(start) == '.') {
                     deletingDecimalPoint = true;
-                }else{
+                } else {
                     deletingDecimalPoint = false;
                 }
             }
@@ -103,30 +125,30 @@ public class HomeActivity extends AppCompatActivity {
 
             @Override
             public synchronized void afterTextChanged(Editable s) {
-                if(!s.toString().equals(current)){
+                if (!s.toString().equals(current)) {
                     pokok.removeTextChangedListener(this);
-                    if(deletingDecimalPoint)
-                        s.delete(s.length()-index-1,s.length()-index);
+                    if (deletingDecimalPoint)
+                        s.delete(s.length() - index - 1, s.length() - index);
 
                     String temp = s.toString();
                     //set non edited value
-                    if(!temp.startsWith(prefix)){
+                    if (!temp.startsWith(prefix)) {
                         temp = current;
                     }
-                    String v_text = temp.replace(prefix,"").replaceAll("[.]","");
+                    String v_text = temp.replace(prefix, "").replaceAll("[.]", "");
                     double v_value = 0;
-                    if(v_text != null && v_text.length()>0) {
+                    if (v_text != null && v_text.length() > 0) {
                         v_value = Double.parseDouble(v_text);
                         pokokV = v_value;
                     }
                     //set edited value
-                    String v_formated = prefix + NumberFormat.getNumberInstance(new Locale("in","ID")).format(v_value);
+                    String v_formated = prefix + NumberFormat.getNumberInstance(new Locale("in", "ID")).format(v_value);
                     current = v_formated;
 
                     pokok.setText(v_formated);
-                    if(index > v_formated.length() || v_formated.length() - index < prefix.length()){
+                    if (index > v_formated.length() || v_formated.length() - index < prefix.length()) {
                         pokok.setSelection(v_formated.length());
-                    }else{
+                    } else {
                         pokok.setSelection(v_formated.length() - index);
                     }
 
@@ -135,32 +157,115 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+//        AsyncTask.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                listJenis = db.userDao().getJenis();
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ArrayAdapter jenisAdapter = new ArrayAdapter(getBaseContext(),R.layout.support_simple_spinner_dropdown_item,listJenis);
+//                        jenis.setAdapter(jenisAdapter);
+//                    }
+//                });
+//            }
+//        });
+
         listJenis = Arrays.asList(getResources().getStringArray(R.array.jenis));
-        ArrayAdapter jenisAdapter = new ArrayAdapter(getBaseContext(),R.layout.support_simple_spinner_dropdown_item,listJenis);
+        ArrayAdapter jenisAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listJenis);
         jenis.setAdapter(jenisAdapter);
 
-        listTahun = new ArrayList<>();
-        for(int x = 2018; x>=2005;x--){
+//        AsyncTask.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                List<String> temp = db.userDao().getUsia();
+//                List<Integer> dbUsiaList = new ArrayList<>();
+//                for(String usia : temp){
+//                    List<String> x = Arrays.asList(usia.split("[<> -]"));
+//                    for(String usiaV : x){
+//                        if(!usiaV.equal("")){
+//                            int i = Integer.parseInt(usiaV);
+//                            dbUsiaList.add(i);
+//                        }
+//                    }
+//                }
+//                if(!dbUsiaList.isEmpty()){
+//                    for(int v :dbUsiaList){
+//                        if(v>maxUsia){
+//                            maxUsia = v;
+//                        }
+//                    }
+//                    int year = Calendar.getInstance().get(Calendar.YEAR);
+//
+//                    for(int tempYear = year; tempYear >= year-maxUsia;tempYear--){
+//                        listTahun.add(tempYear);
+//                    }
+//                    runOnUiThread(
+//                            new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    ArrayAdapter tahunAdapter = new ArrayAdapter(getBaseContext(),R.layout.support_simple_spinner_dropdown_item,listTahun);
+//                                    tahun.setAdapter(tahunAdapter);
+//                                }
+//                            }
+//                    );
+//                }
+//            }
+//        });
+
+//        List<String> temp = new ArrayList<>();
+//        temp.add(" < 5 tahun");
+//        temp.add("5 - 10 tahun");
+//        temp.add("11 - 15 tahun");
+//        List<Integer> dbUsiaList = new ArrayList<>();
+//        for (String usia : temp) {
+//            usia = usia.replace(" tahun", "");
+//            List<String> x = Arrays.asList(usia.split("[<> -]"));
+//            for (String tempV : x) {
+//                if (!tempV.equals("")) {
+//                    int i = Integer.parseInt(tempV);
+//                    dbUsiaList.add(i);
+//                }
+//            }
+//        }
+//        if (!dbUsiaList.isEmpty()) {
+//            for (int v : dbUsiaList) {
+//                if (v > maxUsia) {
+//                    maxUsia = v;
+//                }
+//            }
+//            int year = Calendar.getInstance().get(Calendar.YEAR);
+//            for (int tempYear = year; tempYear >= year - maxUsia; tempYear--) {
+//                listTahun.add(tempYear);
+//            }
+//
+//            ArrayAdapter tahunAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listTahun);
+//            tahun.setAdapter(tahunAdapter);
+//        }
+
+
+        for (int x = 2018; x >= 2005; x--) {
             listTahun.add(x);
         }
-        ArrayAdapter tahunAdapter = new ArrayAdapter(getBaseContext(),R.layout.support_simple_spinner_dropdown_item,listTahun);
+        ArrayAdapter tahunAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listTahun);
         tahun.setAdapter(tahunAdapter);
+
         hitung.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(pokokV<50000000){
+                if (pokokV < 50000000) {
                     pokok.setError("Pokok pinjaman harus diatas 50 juta");
-                }else if(pokokV>200000000){
+                } else if (pokokV > 200000000) {
                     pokok.setError("Pokok pinjaman harus dibawah 200 juta");
-                }else{
+                } else {
                     String pokokPinjaman = pokok.getText().toString();
                     String selectedJenis = jenis.getSelectedItem().toString();
                     String selectedTahun = tahun.getSelectedItem().toString();
 
                     Intent i = new Intent(getBaseContext(), SimulasiKreditActivity.class);
-                    i.putExtra("jenis",selectedJenis);
-                    i.putExtra("pokok",pokokPinjaman);
-                    i.putExtra("tahun",selectedTahun);
+                    i.putExtra("jenis", selectedJenis);
+                    i.putExtra("pokok", pokokPinjaman);
+                    i.putExtra("tahun", selectedTahun);
                     startActivity(i);
                 }
             }

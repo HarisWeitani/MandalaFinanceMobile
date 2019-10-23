@@ -9,8 +9,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.mf.aplikasisolid.syaratScreen.adapter.PersyaratanAdapter;
 import com.mf.id.solidapp.R;
+import com.mf.id.solidapp.syaratScreen.adapter.PersyaratanAdapter;
 
 import java.util.Arrays;
 import java.util.List;
