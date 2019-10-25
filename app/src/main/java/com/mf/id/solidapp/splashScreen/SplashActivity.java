@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mf.id.solidapp.R;
@@ -34,11 +35,12 @@ import retrofit2.Response;
 public class SplashActivity extends AppCompatActivity {
 
     ProgressBar pb;
+    TextView tv;
 
     SharedPreferences sp;
     SharedPreferences.Editor edit;
 
-    boolean hasData;
+    boolean hasData, fromHome;
 
     AppDatabase db;
 
@@ -51,8 +53,12 @@ public class SplashActivity extends AppCompatActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
+        tv = findViewById(R.id.splashTV);
         pb = findViewById(R.id.splashPB);
         pb.setVisibility(View.INVISIBLE);
+
+        Intent z = getIntent();
+        fromHome = z.getBooleanExtra("fromHome", false);
 
         sp = getSharedPreferences(getString(R.string.SPname), MODE_PRIVATE);
         edit = sp.edit();
@@ -61,7 +67,7 @@ public class SplashActivity extends AppCompatActivity {
 
         db = AppDatabase.getInstance(getApplicationContext());
 
-//        client = APIClient.getInstance();
+        client = APIClient.getInstance();
     }
 
     @Override
@@ -72,90 +78,81 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 pb.setVisibility(View.VISIBLE);
+                tv.setText("Mengambil data dari server");
 
-//                AsyncTask.execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        if (isOnline()) {
-//                            try {
-//                                Response<ResponseModel> response = client.getData().execute();
-//                                ResponseModel model = response.body();
-//                                List<ResponseDataModel> listData = model.getDatas();
-//
-//                                for (ResponseDataModel data : listData) {
-//                                    db.userDao().insertData(data);
-//                                }
-//
-//                                edit.putBoolean("hasData", true);
-//                                edit.apply();
-//
-//                                runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        Intent intent = new Intent(getBaseContext(), HomeActivity.class);
-//                                        startActivity(intent);
-//                                        finish();
-//                                        Toast.makeText(getApplicationContext(),"Data berhasil diperbarui",Toast.LENGTH_LONG).show();
-//                                    }
-//                                });
-//
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                        } else {
-//                            if (hasData) {
-//                                runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        Intent intent = new Intent(getBaseContext(), HomeActivity.class);
-//                                        startActivity(intent);
-//                                        finish();
-//                                        Toast.makeText(getApplicationContext(),"Tidak ada koneksi internet, Menggunakan data lama",Toast.LENGTH_LONG).show();
-//                                    }
-//                                });
-//                            } else {
-//                                final AlertDialog.Builder dialogBuilder =
-//                                        new AlertDialog
-//                                                .Builder(getApplicationContext())
-//                                                .setTitle("Error")
-//                                                .setMessage("Tidak ada koneksi internet maupun data lama, Mohon coba lagi jika ada")
-//                                                .setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(DialogInterface dialogInterface, int i) {
-//                                                runOnUiThread(
-//                                                        new Runnable() {
-//                                                            @Override
-//                                                            public void run() {
-//                                                                finish();
-//                                                            }
-//                                                        }
-//                                                );
-//                                            }
-//                                        });
-//                                runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        dialogBuilder.create();
-//                                    }
-//                                });
-//
-//                            }
-//                        }
-//                    }
-//                });
+                AsyncTask.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (isOnline()) {
+                            try {
+                                Response<ResponseModel> response = client.getData().execute();
+                                ResponseModel model = response.body();
+                                List<ResponseDataModel> listData = model.getData();
 
-                new Handler().postDelayed(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
-                                startActivity(intent);
-                                finish();
+                                db.userDao().deleteAllData();
+
+                                for (ResponseDataModel data : listData)
+                                    db.userDao().insertData(data);
+
+                                edit.putBoolean("hasData", true);
+                                edit.apply();
+
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                        Toast.makeText(getApplicationContext(), "Data berhasil diperbarui", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        }, 3000
-                );
+                        } else {
+                            if (hasData || fromHome) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                        Toast.makeText(getApplicationContext(), "Tidak ada koneksi internet, Menggunakan data lama", Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            } else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        tv.setText("Tidak ada koneksi internet maupun data lama, Mohon coba beberapa saat lagi");
+                                        pb.setVisibility(View.INVISIBLE);
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                finish();
+                                            }
+                                        },3000);
+                                    }
+                                });
+
+                            }
+                        }
+                    }
+                });
+
+//                new Handler().postDelayed(
+//                        new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+//                                startActivity(intent);
+//                                finish();
+//                            }
+//                        }, 2000
+//                );
             }
-        }, 3000);
+        }, 1500);
     }
 
     public boolean isOnline() {

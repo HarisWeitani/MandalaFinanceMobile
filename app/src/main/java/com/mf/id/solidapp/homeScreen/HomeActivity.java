@@ -63,7 +63,7 @@ public class HomeActivity extends AppCompatActivity {
         hitung = findViewById(R.id.hitungB);
         setSupportActionBar(tb);
 
-        sp = getSharedPreferences(getString(R.string.SPname),MODE_PRIVATE);
+        sp = getSharedPreferences(getString(R.string.SPname), MODE_PRIVATE);
         edit = sp.edit();
 
         db = AppDatabase.getInstance(getApplicationContext());
@@ -73,6 +73,8 @@ public class HomeActivity extends AppCompatActivity {
         pokok.setText(prefix + 0);
 
         maxUsia = 0;
+
+
     }
 
     @Override
@@ -88,6 +90,7 @@ public class HomeActivity extends AppCompatActivity {
 //            edit.apply();
 
             Intent i = new Intent(getBaseContext(), SplashActivity.class);
+            i.putExtra("fromHome", true);
             startActivity(i);
             finish();
         }
@@ -146,8 +149,10 @@ public class HomeActivity extends AppCompatActivity {
                     current = v_formated;
 
                     pokok.setText(v_formated);
-                    if (index > v_formated.length() || v_formated.length() - index < prefix.length()) {
+                    if (index > v_formated.length()) {
                         pokok.setSelection(v_formated.length());
+                    } else if (v_formated.length() - index < prefix.length()) {
+                        pokok.setSelection(index);
                     } else {
                         pokok.setSelection(v_formated.length() - index);
                     }
@@ -157,61 +162,64 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-//        AsyncTask.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                listJenis = db.userDao().getJenis();
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        ArrayAdapter jenisAdapter = new ArrayAdapter(getBaseContext(),R.layout.support_simple_spinner_dropdown_item,listJenis);
-//                        jenis.setAdapter(jenisAdapter);
-//                    }
-//                });
-//            }
-//        });
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                listJenis = db.userDao().getJenis();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ArrayAdapter jenisAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listJenis);
+                        jenis.setAdapter(jenisAdapter);
+                    }
+                });
+            }
+        });
 
-        listJenis = Arrays.asList(getResources().getStringArray(R.array.jenis));
-        ArrayAdapter jenisAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listJenis);
-        jenis.setAdapter(jenisAdapter);
+//        listJenis = Arrays.asList(getResources().getStringArray(R.array.jenis));
+//        ArrayAdapter jenisAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listJenis);
+//        jenis.setAdapter(jenisAdapter);
 
-//        AsyncTask.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                List<String> temp = db.userDao().getUsia();
-//                List<Integer> dbUsiaList = new ArrayList<>();
-//                for(String usia : temp){
-//                    List<String> x = Arrays.asList(usia.split("[<> -]"));
-//                    for(String usiaV : x){
-//                        if(!usiaV.equal("")){
-//                            int i = Integer.parseInt(usiaV);
-//                            dbUsiaList.add(i);
-//                        }
-//                    }
-//                }
-//                if(!dbUsiaList.isEmpty()){
-//                    for(int v :dbUsiaList){
-//                        if(v>maxUsia){
-//                            maxUsia = v;
-//                        }
-//                    }
-//                    int year = Calendar.getInstance().get(Calendar.YEAR);
-//
-//                    for(int tempYear = year; tempYear >= year-maxUsia;tempYear--){
-//                        listTahun.add(tempYear);
-//                    }
-//                    runOnUiThread(
-//                            new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    ArrayAdapter tahunAdapter = new ArrayAdapter(getBaseContext(),R.layout.support_simple_spinner_dropdown_item,listTahun);
-//                                    tahun.setAdapter(tahunAdapter);
-//                                }
-//                            }
-//                    );
-//                }
-//            }
-//        });
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<String> temp = db.userDao().getUsia();
+                List<Integer> dbUsiaList = new ArrayList<>();
+                for (String usia : temp) {
+                    usia = usia.replace("Tahun", "");
+                    List<String> x = Arrays.asList(usia.split("[<> -]"));
+                    for (String usiaV : x) {
+                        if (!usiaV.equals("")) {
+                            int i = Integer.parseInt(usiaV);
+                            dbUsiaList.add(i);
+                        }
+                    }
+                }
+                if (!dbUsiaList.isEmpty()) {
+                    listTahun = new ArrayList<>();
+                    for (int v : dbUsiaList) {
+                        if (v > maxUsia) {
+                            maxUsia = v;
+                        }
+                    }
+                    maxUsia -= 1;
+                    int year = Calendar.getInstance().get(Calendar.YEAR);
+
+                    for (int tempYear = year; tempYear >= year - maxUsia; tempYear--) {
+                        listTahun.add(tempYear);
+                    }
+                    runOnUiThread(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    ArrayAdapter tahunAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listTahun);
+                                    tahun.setAdapter(tahunAdapter);
+                                }
+                            }
+                    );
+                }
+            }
+        });
 
 //        List<String> temp = new ArrayList<>();
 //        temp.add(" < 5 tahun");
@@ -235,6 +243,7 @@ public class HomeActivity extends AppCompatActivity {
 //                }
 //            }
 //            int year = Calendar.getInstance().get(Calendar.YEAR);
+//            listTahun = new ArrayList<>();
 //            for (int tempYear = year; tempYear >= year - maxUsia; tempYear--) {
 //                listTahun.add(tempYear);
 //            }
@@ -244,19 +253,19 @@ public class HomeActivity extends AppCompatActivity {
 //        }
 
 
-        for (int x = 2018; x >= 2005; x--) {
-            listTahun.add(x);
-        }
-        ArrayAdapter tahunAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listTahun);
-        tahun.setAdapter(tahunAdapter);
+//        for (int x = 2018; x >= 2005; x--) {
+//            listTahun.add(x);
+//        }
+//        ArrayAdapter tahunAdapter = new ArrayAdapter(getBaseContext(), R.layout.support_simple_spinner_dropdown_item, listTahun);
+//        tahun.setAdapter(tahunAdapter);
 
         hitung.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (pokokV < 50000000) {
-                    pokok.setError("Pokok pinjaman harus diatas 50 juta");
+                    pokok.setError("Pokok pinjaman minimal 50 juta");
                 } else if (pokokV > 200000000) {
-                    pokok.setError("Pokok pinjaman harus dibawah 200 juta");
+                    pokok.setError("Pokok pinjaman maximal 200 juta");
                 } else {
                     String pokokPinjaman = pokok.getText().toString();
                     String selectedJenis = jenis.getSelectedItem().toString();
@@ -266,6 +275,7 @@ public class HomeActivity extends AppCompatActivity {
                     i.putExtra("jenis", selectedJenis);
                     i.putExtra("pokok", pokokPinjaman);
                     i.putExtra("tahun", selectedTahun);
+                    i.putExtra("maxBeda", maxUsia + 1);
                     startActivity(i);
                 }
             }

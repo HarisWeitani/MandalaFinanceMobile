@@ -6,7 +6,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIClient {
-    private static String url = "";
+    private static String url = "http://solidcontentmanagementsystem.com/";
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()

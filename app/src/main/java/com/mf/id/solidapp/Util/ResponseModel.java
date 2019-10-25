@@ -5,12 +5,12 @@ import java.util.List;
 public class ResponseModel {
     private String status;
     private String message;
-    private List<ResponseDataModel> datas;
+    private List<ResponseDataModel> data;
 
-    public ResponseModel(String status, String message, List<ResponseDataModel> datas) {
+    public ResponseModel(String status, String message, List<ResponseDataModel> data) {
         this.status = status;
         this.message = message;
-        this.datas = datas;
+        this.data = data;
     }
 
     public String getStatus() {
@@ -29,11 +29,11 @@ public class ResponseModel {
         this.message = message;
     }
 
-    public List<ResponseDataModel> getDatas() {
-        return datas;
+    public List<ResponseDataModel> getData() {
+        return data;
     }
 
-    public void setDatas(List<ResponseDataModel> datas) {
-        this.datas = datas;
+    public void setData(List<ResponseDataModel> data) {
+        this.data = data;
     }
 }

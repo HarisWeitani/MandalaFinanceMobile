@@ -7,7 +7,7 @@ import retrofit2.http.GET;
 
 public interface ApiInterface {
 
-    @GET("")
+    @GET("api/calculation/get_all")
     Call<ResponseModel> getData();
 
 }

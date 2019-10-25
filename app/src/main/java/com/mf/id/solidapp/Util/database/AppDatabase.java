@@ -10,7 +10,7 @@ import com.mf.id.solidapp.Util.ResponseDataModel;
 
 @Database(entities = {ResponseDataModel.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {
-    private static AppDatabase instance;
+    private static AppDatabase instance = null;
     public abstract DataDao userDao();
 
     public static AppDatabase getInstance(Context context){

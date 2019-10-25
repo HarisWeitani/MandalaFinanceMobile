@@ -34,7 +34,7 @@ public class SimulasiKreditActivity extends AppCompatActivity {
     List<SimulasiModel> modelList = new ArrayList<>();
     TextView catatan, rincian;
     String pokok, jenis, tahun;
-    int usia;
+    int usia, maxBeda;
 
     AppDatabase db;
     List<ResponseDataModel> listData = new ArrayList<>();
@@ -63,22 +63,56 @@ public class SimulasiKreditActivity extends AppCompatActivity {
         pokok = i.getStringExtra("pokok");
         jenis = i.getStringExtra("jenis");
         tahun = i.getStringExtra("tahun");
+        maxBeda = i.getIntExtra("maxBeda", 0);
 
-//        usia = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(tahun);
+        usia = Calendar.getInstance().get(Calendar.YEAR) - Integer.parseInt(tahun);
+        final String filterUsia;
+        if (usia < 5) {
+            filterUsia = "%< 5%";
+        } else if (usia < 10) {
+            filterUsia = "%5 - 10%";
+        } else {
+            filterUsia = "%11 - 15%";
+        }
+
+        final Long tempPokok = Long.parseLong(pokok.replace("Rp. ", "").replaceAll("[.]", ""));
+
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<ResponseDataModel> listData = db.userDao().getFilteredData(filterUsia, jenis);
+                for (ResponseDataModel model : listData) {
+                    int tenor = Integer.parseInt(model.getDt_interest_name().replace(" Bulan", ""));
+                    double bunga = Double.parseDouble(model.getDt_interest_value());
+                    if ((usia + (tenor / 12)) <= maxBeda) {
+                        modelList.add(new SimulasiModel(tenor, bunga));
+                    }
+
+                }
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter = new SimulasiAdapter(getBaseContext(), modelList, tempPokok);
+                        simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
+                        simulasiRV.setAdapter(adapter);
+                    }
+                });
+            }
+        });
 //        Toast.makeText(getBaseContext(),String.valueOf(usia),Toast.LENGTH_LONG).show();
 
-        modelList.add(new SimulasiModel(12,20.5));
-        modelList.add(new SimulasiModel(24,21));
-        modelList.add(new SimulasiModel(36,21.5));
+//        modelList.add(new SimulasiModel(12,20.5));
+//        modelList.add(new SimulasiModel(24,21));
+//        modelList.add(new SimulasiModel(36,21.5));
 
-        catatan.setText(getString(R.string.catatan) + "\n" + new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date()) );
+        catatan.setText(getString(R.string.catatan) + "\n" + new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date()));
         rincian.setText(R.string.rincian);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        final Long tempPokok = Long.parseLong(pokok.replace("Rp. ","").replaceAll("[.]",""));
 
 //        AsyncTask.execute(new Runnable() {
 //            @Override
@@ -107,9 +141,9 @@ public class SimulasiKreditActivity extends AppCompatActivity {
 //            }
 //        });
 
-        adapter = new SimulasiAdapter(getBaseContext(),modelList,tempPokok);
-        simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL,false));
-        simulasiRV.setAdapter(adapter);
+//        adapter = new SimulasiAdapter(getBaseContext(),modelList,tempPokok);
+//        simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL,false));
+//        simulasiRV.setAdapter(adapter);
 
     }
 }

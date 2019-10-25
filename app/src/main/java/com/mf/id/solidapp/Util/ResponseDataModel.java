@@ -8,145 +8,166 @@ import android.support.annotation.NonNull;
 
 @Entity(tableName = "ResponseDatas")
 public class ResponseDataModel {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @NonNull
-    @ColumnInfo(name = "calculationId")
-    private String calculationId;
-    @ColumnInfo(name = "vehicleTypeName")
-    private String vehicleTypeName;
-    @ColumnInfo(name = "vehicleAge")
-    private String vehicleAge;
-    @ColumnInfo(name = "interestId")
-    private String interestId;
-    @ColumnInfo(name = "isDeleted")
-    private String isDeleted;
-    @ColumnInfo(name = "createdDate")
-    private String createdDate;
-    @ColumnInfo(name = "updatedDate")
-    private String updatedDate;
-    @ColumnInfo(name = "createdBy")
-    private String createdBy;
-    @ColumnInfo(name = "updatedBy")
-    private String updatedBy;
-    @ColumnInfo(name = "dtInterestId")
-    private String dtInterestId;
-    @ColumnInfo(name = "dtInterestName")
-    private String dtInterestName;
-    @ColumnInfo(name = "dtInterestValue")
-    private String dtInterestValue;
+    @ColumnInfo(name = "id")
+    private int id;
+    @ColumnInfo(name = "calculation_id")
+    private String calculation_id;
+    @ColumnInfo(name = "vehicle_type_name")
+    private String vehicle_type_name;
+    @ColumnInfo(name = "vehicle_age")
+    private String vehicle_age;
+    @ColumnInfo(name = "interest_id")
+    private String interest_id;
+    @ColumnInfo(name = "is_deleted")
+    private String is_deleted;
+    @ColumnInfo(name = "created_date")
+    private String created_date;
+    @ColumnInfo(name = "updated_date")
+    private String updated_date;
+    @ColumnInfo(name = "created_by")
+    private String created_by;
+    @ColumnInfo(name = "updated_by")
+    private String updated_by;
+    @ColumnInfo(name = "dt_interest_id")
+    private String dt_interest_id;
+    @ColumnInfo(name = "dt_interest_name")
+    private String dt_interest_name;
+    @ColumnInfo(name = "dt_interest_value")
+    private String dt_interest_value;
 
-    public ResponseDataModel(@NonNull String calculationId, String vehicleTypeName, String vehicleAge, String interestId, String isDeleted, String createdDate, String updatedDate, String createdBy, String updatedBy, String dtInterestId, String dtInterestName, String dtInterestValue) {
-        this.calculationId = calculationId;
-        this.vehicleTypeName = vehicleTypeName;
-        this.vehicleAge = vehicleAge;
-        this.interestId = interestId;
-        this.isDeleted = isDeleted;
-        this.createdDate = createdDate;
-        this.updatedDate = updatedDate;
-        this.createdBy = createdBy;
-        this.updatedBy = updatedBy;
-        this.dtInterestId = dtInterestId;
-        this.dtInterestName = dtInterestName;
-        this.dtInterestValue = dtInterestValue;
+    public ResponseDataModel(
+            @NonNull String calculation_id,
+            String vehicle_type_name,
+            String vehicle_age,
+            String interest_id,
+            String is_deleted,
+            String created_date,
+            String updated_date,
+            String created_by,
+            String updated_by,
+            String dt_interest_id,
+            String dt_interest_name,
+            String dt_interest_value) {
+        this.calculation_id = calculation_id;
+        this.vehicle_type_name = vehicle_type_name;
+        this.vehicle_age = vehicle_age;
+        this.interest_id = interest_id;
+        this.is_deleted = is_deleted;
+        this.created_date = created_date;
+        this.updated_date = updated_date;
+        this.created_by = created_by;
+        this.updated_by = updated_by;
+        this.dt_interest_id = dt_interest_id;
+        this.dt_interest_name = dt_interest_name;
+        this.dt_interest_value = dt_interest_value;
     }
 
     @Ignore
     public ResponseDataModel(){}
 
-    @NonNull
-    public String getCalculationId() {
-        return calculationId;
+    public int getId() {
+        return id;
     }
 
-    public void setCalculationId(@NonNull String calculationId) {
-        this.calculationId = calculationId;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String getVehicleTypeName() {
-        return vehicleTypeName;
+    public String getCalculation_id() {
+        return calculation_id;
     }
 
-    public void setVehicleTypeName(String vehicleTypeName) {
-        this.vehicleTypeName = vehicleTypeName;
+    public void setCalculation_id(String calculation_id) {
+        this.calculation_id = calculation_id;
     }
 
-    public String getVehicleAge() {
-        return vehicleAge;
+    public String getVehicle_type_name() {
+        return vehicle_type_name;
     }
 
-    public void setVehicleAge(String vehicleAge) {
-        this.vehicleAge = vehicleAge;
+    public void setVehicle_type_name(String vehicle_type_name) {
+        this.vehicle_type_name = vehicle_type_name;
     }
 
-    public String getInterestId() {
-        return interestId;
+    public String getVehicle_age() {
+        return vehicle_age;
     }
 
-    public void setInterestId(String interestId) {
-        this.interestId = interestId;
+    public void setVehicle_age(String vehicle_age) {
+        this.vehicle_age = vehicle_age;
     }
 
-    public String getIsDeleted() {
-        return isDeleted;
+    public String getInterest_id() {
+        return interest_id;
     }
 
-    public void setIsDeleted(String isDeleted) {
-        this.isDeleted = isDeleted;
+    public void setInterest_id(String interest_id) {
+        this.interest_id = interest_id;
     }
 
-    public String getCreatedDate() {
-        return createdDate;
+    public String getIs_deleted() {
+        return is_deleted;
     }
 
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
+    public void setIs_deleted(String is_deleted) {
+        this.is_deleted = is_deleted;
     }
 
-    public String getUpdatedDate() {
-        return updatedDate;
+    public String getCreated_date() {
+        return created_date;
     }
 
-    public void setUpdatedDate(String updatedDate) {
-        this.updatedDate = updatedDate;
+    public void setCreated_date(String created_date) {
+        this.created_date = created_date;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getUpdated_date() {
+        return updated_date;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setUpdated_date(String updated_date) {
+        this.updated_date = updated_date;
     }
 
-    public String getUpdatedBy() {
-        return updatedBy;
+    public String getCreated_by() {
+        return created_by;
     }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
+    public void setCreated_by(String created_by) {
+        this.created_by = created_by;
     }
 
-    public String getDtInterestId() {
-        return dtInterestId;
+    public String getUpdated_by() {
+        return updated_by;
     }
 
-    public void setDtInterestId(String dtInterestId) {
-        this.dtInterestId = dtInterestId;
+    public void setUpdated_by(String updated_by) {
+        this.updated_by = updated_by;
     }
 
-    public String getDtInterestName() {
-        return dtInterestName;
+    public String getDt_interest_id() {
+        return dt_interest_id;
     }
 
-    public void setDtInterestName(String dtInterestName) {
-        this.dtInterestName = dtInterestName;
+    public void setDt_interest_id(String dt_interest_id) {
+        this.dt_interest_id = dt_interest_id;
     }
 
-    public String getDtInterestValue() {
-        return dtInterestValue;
+    public String getDt_interest_name() {
+        return dt_interest_name;
     }
 
-    public void setDtInterestValue(String dtInterestValue) {
-        this.dtInterestValue = dtInterestValue;
+    public void setDt_interest_name(String dt_interest_name) {
+        this.dt_interest_name = dt_interest_name;
+    }
+
+    public String getDt_interest_value() {
+        return dt_interest_value;
+    }
+
+    public void setDt_interest_value(String dt_interest_value) {
+        this.dt_interest_value = dt_interest_value;
     }
 }
