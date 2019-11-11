@@ -8,7 +8,7 @@ import android.content.Context;
 import com.mf.id.solidapp.R;
 import com.mf.id.solidapp.Util.ResponseDataModel;
 
-@Database(entities = {ResponseDataModel.class}, version = 1)
+@Database(entities = {ResponseDataModel.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase instance = null;
     public abstract DataDao userDao();

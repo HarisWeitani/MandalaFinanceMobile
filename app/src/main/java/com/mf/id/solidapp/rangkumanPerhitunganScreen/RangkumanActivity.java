@@ -57,20 +57,22 @@ public class RangkumanActivity extends AppCompatActivity {
         durasi = x.getIntExtra("durasi",0);
         bunga = x.getDoubleExtra("bunga",0);
 
+        syarat = findViewById(R.id.persyaratanB);
+    }
 
-        long ar = angsuranV*durasi;
-        long totalBunga = ar-pokok;
-        float bungaFlat = Math.round(totalBunga*10000/pokok/(durasi/12));
-        float sukuBungaV = Math.round(bungaFlat/12);
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         pokokHutang.setText("Rp. " + NumberFormat.getNumberInstance(new Locale("in","ID")).format(pokok));
-        sukuBunga.setText(Float.valueOf(sukuBungaV/100) + " %" );
+        sukuBunga.setText(Float.valueOf(getSukuBunga(angsuranV,durasi,pokok)/100) + " %" );
         tenor.setText(durasi + " Bulan");
         angsuran.setText("Rp. " + NumberFormat.getNumberInstance(new Locale("in","ID")).format(angsuranV));
 
         catatan.setText(getString(R.string.catatan) + "\n" + new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date()) );
         rincian.setText(R.string.rincian);
 
-        syarat = findViewById(R.id.persyaratanB);
+
         syarat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,5 +80,12 @@ public class RangkumanActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+    }
+
+    float getSukuBunga(long angsuran, int durasi, long pokok){
+        long ar = angsuran*durasi;
+        long totalBunga = ar-pokok;
+        float bungaFlat = Math.round(totalBunga*10000/pokok/(durasi/12));
+        return Math.round(bungaFlat/12);
     }
 }

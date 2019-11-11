@@ -30,6 +30,8 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 public class SplashActivity extends AppCompatActivity {
@@ -84,38 +86,78 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         if (isOnline()) {
-                            try {
-                                Response<ResponseModel> response = client.getData().execute();
-                                ResponseModel model = response.body();
-                                List<ResponseDataModel> listData = model.getData();
+                            client.getData().enqueue(
+                                    new Callback<ResponseModel>() {
+                                        @Override
+                                        public void onResponse(Call<ResponseModel> call, Response<ResponseModel> response) {
+                                            ResponseModel model = response.body();
+                                            final List<ResponseDataModel> listData = model.getData();
 
-                                db.userDao().deleteAllData();
+                                            AsyncTask.execute(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    db.userDao().deleteAllData();
 
-                                for (ResponseDataModel data : listData)
-                                    db.userDao().insertData(data);
+                                                    for (ResponseDataModel data : listData)
+                                                        db.userDao().insertData(data);
 
-                                edit.putBoolean("hasData", true);
-                                edit.apply();
+                                                    edit.putBoolean("hasData", true);
+                                                    edit.apply();
 
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Intent intent = new Intent(getBaseContext(), HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                        Toast.makeText(getApplicationContext(), "Data berhasil diperbarui", Toast.LENGTH_LONG).show();
+                                                    runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+                                                            startActivity(intent);
+                                                            finish();
+                                                            Toast.makeText(getApplicationContext(), "Data berhasil diperbarui", Toast.LENGTH_LONG).show();
+                                                        }
+                                                    });
+                                                }
+                                            });
+
+                                        }
+
+                                        @Override
+                                        public void onFailure(Call<ResponseModel> call, Throwable t) {
+                                            if (hasData || fromHome) {
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+                                                        intent.putExtra("sync", false);
+                                                        startActivity(intent);
+                                                        finish();
+                                                        Toast.makeText(getApplicationContext(), "Gagal memperbarui data, Menggunakan data lama", Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                            }else{
+                                                runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        tv.setText("Gagal memperbarui data, Mohon coba beberapa saat lagi");
+                                                        pb.setVisibility(View.GONE);
+                                                        new Handler().postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                finish();
+                                                            }
+                                                        }, 5000);
+                                                    }
+                                                });
+                                            }
+                                        }
                                     }
-                                });
+                            );
 
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+
                         } else {
                             if (hasData || fromHome) {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
                                         Intent intent = new Intent(getBaseContext(), HomeActivity.class);
+                                        intent.putExtra("sync", false);
                                         startActivity(intent);
                                         finish();
                                         Toast.makeText(getApplicationContext(), "Tidak ada koneksi internet, Menggunakan data lama", Toast.LENGTH_LONG).show();
@@ -126,13 +168,13 @@ public class SplashActivity extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         tv.setText("Tidak ada koneksi internet maupun data lama, Mohon coba beberapa saat lagi");
-                                        pb.setVisibility(View.INVISIBLE);
+                                        pb.setVisibility(View.GONE);
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
                                                 finish();
                                             }
-                                        },3000);
+                                        }, 5000);
                                     }
                                 });
 
@@ -141,20 +183,12 @@ public class SplashActivity extends AppCompatActivity {
                     }
                 });
 
-//                new Handler().postDelayed(
-//                        new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                Intent intent = new Intent(getBaseContext(), HomeActivity.class);
-//                                startActivity(intent);
-//                                finish();
-//                            }
-//                        }, 2000
-//                );
             }
         }, 1500);
     }
 
+
+    //check internet connection
     public boolean isOnline() {
         try {
             int timeoutMs = 1500;

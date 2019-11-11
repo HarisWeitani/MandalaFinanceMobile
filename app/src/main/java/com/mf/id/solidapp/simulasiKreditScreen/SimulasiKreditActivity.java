@@ -32,7 +32,7 @@ public class SimulasiKreditActivity extends AppCompatActivity {
     RecyclerView simulasiRV;
     SimulasiAdapter adapter;
     List<SimulasiModel> modelList = new ArrayList<>();
-    TextView catatan, rincian;
+    TextView catatan, rincian, peringatan;
     String pokok, jenis, tahun;
     int usia, maxBeda;
 
@@ -49,6 +49,9 @@ public class SimulasiKreditActivity extends AppCompatActivity {
         simulasiRV = findViewById(R.id.simulasiKreditRV);
         catatan = findViewById(R.id.simulasiCatatanTV);
         rincian = findViewById(R.id.simulasiRincianTV);
+        peringatan = findViewById(R.id.peringatanTV);
+        peringatan.setVisibility(View.GONE);
+
         setSupportActionBar(tb);
         tb.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,14 +83,13 @@ public class SimulasiKreditActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                List<ResponseDataModel> listData = db.userDao().getFilteredData(filterUsia, jenis);
+                listData = db.userDao().getFilteredData(filterUsia, jenis);
                 for (ResponseDataModel model : listData) {
                     int tenor = Integer.parseInt(model.getDt_interest_name().replace(" Bulan", ""));
                     double bunga = Double.parseDouble(model.getDt_interest_value());
                     if ((usia + (tenor / 12)) <= maxBeda) {
                         modelList.add(new SimulasiModel(tenor, bunga));
                     }
-
                 }
 
                 runOnUiThread(new Runnable() {
@@ -96,15 +98,14 @@ public class SimulasiKreditActivity extends AppCompatActivity {
                         adapter = new SimulasiAdapter(getBaseContext(), modelList, tempPokok);
                         simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(), LinearLayoutManager.VERTICAL, false));
                         simulasiRV.setAdapter(adapter);
+
+                        if(modelList.isEmpty() && maxBeda <15){
+                            peringatan.setVisibility(View.VISIBLE);
+                        }
                     }
                 });
             }
         });
-//        Toast.makeText(getBaseContext(),String.valueOf(usia),Toast.LENGTH_LONG).show();
-
-//        modelList.add(new SimulasiModel(12,20.5));
-//        modelList.add(new SimulasiModel(24,21));
-//        modelList.add(new SimulasiModel(36,21.5));
 
         catatan.setText(getString(R.string.catatan) + "\n" + new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date()));
         rincian.setText(R.string.rincian);
@@ -113,37 +114,6 @@ public class SimulasiKreditActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-//        AsyncTask.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                listData = db.userDao().getFilteredData(String.valueOf(usia),jenis);
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        int tempDurasi;
-//                        double tempBunga;
-//                        for(ResponseDataModel model : listData){
-//                            tempDurasi = Integer.parseInt(model.getDtInterestName().replace(" Bulan",""));
-//                            tempBunga = Double.parseDouble(model.getDtInterestValue());
-//                            modelList.add(new SimulasiModel(tempDurasi,tempBunga));
-//                        }
-//                        runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                adapter = new SimulasiAdapter(getBaseContext(),modelList,tempPokok);
-//                                simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL,false));
-//                                simulasiRV.setAdapter(adapter);
-//                            }
-//                        });
-//                    }
-//                });
-//            }
-//        });
-
-//        adapter = new SimulasiAdapter(getBaseContext(),modelList,tempPokok);
-//        simulasiRV.setLayoutManager(new LinearLayoutManager(getBaseContext(),LinearLayoutManager.VERTICAL,false));
-//        simulasiRV.setAdapter(adapter);
 
     }
 }
