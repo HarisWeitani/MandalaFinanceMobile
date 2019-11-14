@@ -6,4 +6,5 @@
     <color name="backgroundToolbar">#FFFFFF</color>
     <color name="toolbarIcon">#ED2838</color>
     <color name="toolbarTextColor">#11C0D8</color>
+    <color name="black">#000000</color>
 </resources>
