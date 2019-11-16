@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:orientation="vertical"
     android:layout_height="match_parent">
 
     <android.support.v7.widget.Toolbar
@@ -12,9 +13,6 @@
         android:background="#FFFFFF"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_arrow_back"
         app:title="Simulasi Kredit*"
         app:titleTextColor="@color/toolbarTextColor" />
@@ -22,7 +20,8 @@
     <ScrollView
         android:id="@+id/scrollView3"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -85,33 +84,39 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/holo_red_light" />
 
-            <TextView
-                android:id="@+id/simulasiCatatanTV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:textColor="@color/black"
-                android:textSize="20sp"
-                android:text="Catatan:\n Perhitungan simulasi kredit per Minggu, (tanggal hari ini, bulan hari ini, tahun hari ini)"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-            <TextView
-                android:id="@+id/simulasiRincianTV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:text="*Rincian Simulasi diatas bersifat estimasi dan tidak mengikat dan dapat berubah sewaktu - waktu mengikuti kebijakan yang berlaku.  Data diatas belum termasuk biaya lain - lain. Untuk perhitungan detail, hubungi Solid atau cabang terdekat."
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:textColor="@android:color/holo_red_light"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/simulasiCatatanTV" />
 
         </LinearLayout>
     </ScrollView>
 
-</android.support.constraint.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        >
+
+        <TextView
+            android:id="@+id/simulasiCatatanTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:text="Catatan:\n Perhitungan simulasi kredit per Minggu, (tanggal hari ini, bulan hari ini, tahun hari ini)"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <TextView
+            android:id="@+id/simulasiRincianTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="*Rincian Simulasi diatas bersifat estimasi dan tidak mengikat dan dapat berubah sewaktu - waktu mengikuti kebijakan yang berlaku.  Data diatas belum termasuk biaya lain - lain. Untuk perhitungan detail, hubungi Solid atau cabang terdekat."
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/holo_red_light"/>
+
+    </LinearLayout>
+
+</LinearLayout>
